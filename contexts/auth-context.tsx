@@ -1,0 +1,47 @@
+"use client";
+
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
+import type { Profile } from "@/types";
+import { USER_ROLE } from "@/utils/constants";
+
+interface AuthContextType {
+  profile: Profile | null;
+  isAdmin: boolean;
+  setAuthData: (profile: Profile | null) => void;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  const setAuthData = (profile: Profile | null) => {
+    setProfile(profile);
+  };
+
+  // Check if current user is admin
+  const isAdmin = useMemo(() => {
+    if (!profile) return false;
+    return profile.role === USER_ROLE.ADMIN;
+  }, [profile]);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    setProfile(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ profile, isAdmin, setAuthData, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+
+  return ctx;
+}
