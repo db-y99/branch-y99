@@ -55,6 +55,8 @@
     "@react-aria/visually-hidden": "3.8.28",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.88.0",
+    "@types/archiver": "^7.0.0",
+    "archiver": "^7.0.1",
     "clsx": "2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "11.18.2",

@@ -43,6 +43,5 @@ export const getDefaultDateRange = () => {
 
 export const getFileUrl = (file: string) => {
   if (!file) return;
-  console.log({ file });
   return `${process.env.NEXT_PUBLIC_API_URL}/static/files/${file}`;
 };

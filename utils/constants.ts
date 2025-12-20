@@ -30,3 +30,21 @@ export const APPLICATION_STATUS_MAP: Record<
   6: { label: "Đã ký hợp đồng", color: "primary" }, // Legal phase
   7: { label: "Đã giải ngân", color: "secondary" }, // Financial complete
 };
+
+export const APPLICATION_FILE_TYPE_MAP = {
+  CCCD_MT: "cccd-mt",
+  CCCD_MS: "cccd-ms",
+  AVATAR: "avatar",
+  DKKH: "dkkh",
+  DKKD: "dkkd",
+  XNL: "xnl",
+  XNTN: "xntn",
+  DKX: "dkx",
+  BLX: "blx",
+  HDDC: "hddc",
+  SD: "sd",
+  IMAGE: "image",
+  CV: "cv",
+  CHUKY: "chuky",
+  XNCT: "xnct",
+} as const;

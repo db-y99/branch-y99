@@ -127,3 +127,18 @@ export type ApplicationFileListResponse = {
   full_data: boolean;
   rows: ApplicationFile[];
 };
+
+export type DocumentType = {
+  id: number;
+  code: string;
+  name: string;
+  en: string;
+  index: number;
+  create_time: string;
+};
+
+export type DocumentTypeListResponse = {
+  total_rows: number;
+  full_data: boolean;
+  rows: DocumentType[];
+};
