@@ -34,15 +34,25 @@ import {
   formatDateTimeVN,
   getDefaultDateRange,
 } from "@/utils/functions";
-import NotesModal from "./notes-modal";
-import ApplicationModal from "./application-modal";
+import NotesModal from "@/components/notes-modal";
+import ApplicationModal from "@/components/application-modal";
 import { APPLICATION_STATUS_MAP } from "@/utils/constants";
 
 /* ================= COLUMNS ================= */
 
 const columns = [
   { name: "CODE", uid: "code", sortable: true },
+  { name: "MÃ KHÁCH HÀNG", uid: "customer__code" },
   { name: "FULL NAME", uid: "fullname" },
+  { name: "GIỚI TÍNH", uid: "sex__name" },
+  { name: "GIẤY TỜ", uid: "legal_type__name" },
+  { name: "MÃ SỐ", uid: "legal_code" },
+  { name: "LOẠI SẢN PHẨM", uid: "product__type__name" },
+  { name: "TÀI SẢN CẦM CỐ", uid: "product__category__name" },
+  { name: "LOẠI TIỀN", uid: "currency__code" },
+  { name: "NGƯỜI TẠO ĐƠN", uid: "creator__fullname" },
+  { name: "NGUỒN", uid: "source__name" },
+  { name: "LOAN CODE", uid: "loanapp__code" },
   { name: "PROVINCE", uid: "province" },
   { name: "DISTRICT", uid: "district" },
   { name: "ADDRESS", uid: "address" },
@@ -98,7 +108,6 @@ export default function ApplicationContent() {
 
   const [dateRange, setDateRange] = React.useState(getDefaultDateRange);
 
-  const [selectedNotes, setSelectedNotes] = React.useState<string>("");
   const [selectedApplication, setSelectedApplication] =
     React.useState<Application | null>(null);
 
@@ -241,7 +250,7 @@ export default function ApplicationContent() {
           return app.loan_amount.toLocaleString("vi-VN");
 
         case "loan_term":
-          return `${app.loan_term} tháng`;
+          return `${app.loan_term}`;
 
         case "status":
           return (
@@ -261,7 +270,7 @@ export default function ApplicationContent() {
                 hasNote ? <StickyNote size={16} /> : <PlusIcon size={16} />
               }
               onPress={() => {
-                setSelectedNotes(app.note ?? "");
+                setSelectedApplication(app);
                 onNotesModalOpen();
               }}
             ></Button>
@@ -277,6 +286,27 @@ export default function ApplicationContent() {
               </div>
             </div>
           );
+
+        case "customer__code":
+          return (app as any).customer__code || "/";
+        case "sex__name":
+          return (app as any).sex__name || "/";
+        case "legal_type__name":
+          return (app as any).legal_type__name || "/";
+        case "legal_code":
+          return app.legal_code || "/";
+        case "product__type__name":
+          return (app as any).product__type__name || "/";
+        case "product__category__name":
+          return (app as any).product__category__name || "/";
+        case "currency__code":
+          return (app as any).currency__code || "/";
+        case "creator__fullname":
+          return (app as any).creator__fullname || "/";
+        case "source__name":
+          return (app as any).source__name || "/";
+        case "loanapp__code":
+          return (app as any).loanapp__code || "/";
 
         default:
           return app[columnKey as keyof Application];
@@ -455,9 +485,13 @@ export default function ApplicationContent() {
       )}
       {isNotesModalOpen && (
         <NotesModal
-          note={selectedNotes}
+          application={selectedApplication}
+          loginId={profile?.id || 0}
           isOpen={isNotesModalOpen}
           onClose={onNotesModalClose}
+          onSuccess={() => {
+            mutate(); // Refresh data after update
+          }}
         />
       )}
     </>

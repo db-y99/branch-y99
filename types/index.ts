@@ -81,8 +81,11 @@ export type Application = {
   customer: number;
 
   creator: number | null;
+  creator__fullname?: string | null;
   updater: number | null;
+  updater__fullname?: string | null;
   approver: number | null;
+  approver__fullname?: string | null;
 
   source: number;
 
@@ -141,4 +144,19 @@ export type DocumentTypeListResponse = {
   total_rows: number;
   full_data: boolean;
   rows: DocumentType[];
+};
+
+export type UpdateApplicationNoteParams = {
+  id: number;
+  note: string;
+  code: string;
+  fullname: string;
+  province: string;
+  district: string;
+  address: string;
+  legal_code: string;
+  country: number;
+  sex: number;
+  legal_type: number;
+  loginId: number;
 };

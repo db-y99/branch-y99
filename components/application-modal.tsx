@@ -22,7 +22,7 @@ import {
 } from "@/utils/constants";
 import useSWR from "swr";
 import { fetcher } from "@/utils/fetcher";
-import { getFileUrl } from "@/utils/functions";
+import { getFileUrl, formatDateTimeVN } from "@/utils/functions";
 import ShowImageModal from "@/components/show-image-modal";
 
 interface ApplicationModalProps {
@@ -268,27 +268,39 @@ export default function ApplicationModal({
 
                     <InfoRow
                       label="Người tạo"
-                      value={application.creator || "/"}
+                      value={application.creator__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian tạo"
-                      value={application.create_time}
+                      value={
+                        application.create_time
+                          ? formatDateTimeVN(application.create_time)
+                          : "/"
+                      }
                     />
                     <InfoRow
                       label="Người cập nhật"
-                      value={application.updater || "/"}
+                      value={application.updater__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian cập nhật"
-                      value={application.update_time}
+                      value={
+                        application.update_time
+                          ? formatDateTimeVN(application.update_time)
+                          : "/"
+                      }
                     />
                     <InfoRow
                       label="Người duyệt"
-                      value={application.approver || "/"}
+                      value={application.approver__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian duyệt"
-                      value={application.approve_time || "/"}
+                      value={
+                        application.approve_time
+                          ? formatDateTimeVN(application.approve_time)
+                          : "/"
+                      }
                     />
                     <InfoRow label="Được ký bởi" value="/" />
                     <InfoRow label="Thời gian ký hợp đồng" value="/" />
