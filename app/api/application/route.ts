@@ -1,3 +1,4 @@
+import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -7,6 +8,23 @@ export async function GET(request: Request) {
   const status = searchParams.get("status");
   const from = searchParams.get("from");
   const to = searchParams.get("to");
+
+  const supabase = await createClient();
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select(
+      `
+      *,
+      branch_id:branches(*)
+      `
+    )
+    .eq("id", loginId)
+    .single();
+  if (profileError) {
+    return NextResponse.json({ error: profileError.message }, { status: 500 });
+  }
+
+  console.log({ profile });
 
   const filterObj: Record<string, any> = {
     create_time__date__gte: "2025-01-01",
@@ -24,6 +42,10 @@ export async function GET(request: Request) {
     filterObj.create_time__date__lte = to;
   }
 
+  if (profile?.branch_id.code !== "HQ") {
+    filterObj["note__icontains"] = `#branch:${profile?.branch_id.code}`;
+  }
+
   const url = `${apiUrl}/data/Application/?sort=-id&values=id,approve_amount,approve_term,note,loanapp__code,creator,updater,approver,approver__fullname,product,product__type__name,product__type__code,product__category__name,product__category__code,branch,customer,customer__code,status,status__name,branch__code,country__code,country__name,currency,currency__code,loan_amount,loan_term,code,fullname,phone,province,district,address,legal_type,legal_type__code,legal_type__name,sex,sex__name,issue_place,loan_term,loan_amount,legal_type__name,legal_code,issue_date,issue_place,country,collaborator,create_time,update_time,creator__fullname,updater,updater__fullname,source,source__name&filter=${encodeURIComponent(JSON.stringify(filterObj))}&login=${loginId}`;
 
   try {
@@ -36,7 +58,12 @@ export async function GET(request: Request) {
       throw new Error(`API call failed with status: ${response.status}`);
     }
     const data = await response.json();
-    return NextResponse.json(data);
+
+    return NextResponse.json({
+      total_rows: data.total_rows,
+      full_data: true,
+      rows: data.rows,
+    });
   } catch (error: any) {
     console.error("Error fetching application data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

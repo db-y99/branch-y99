@@ -139,10 +139,13 @@ export default function ApplicationContent() {
     return params.length ? `&${params.join("&")}` : "";
   }, [statusQuery, dateQuery]);
 
-  const { data, isLoading, mutate } = useSWR<ApplicationListResponse>(
-    profile?.id ? `/api/application?loginId=${profile.id}${queryString}` : null,
-    fetcher
-  );
+  const { data, isLoading, mutate, isValidating } =
+    useSWR<ApplicationListResponse>(
+      profile?.id
+        ? `/api/application?loginId=${profile.id}${queryString}`
+        : null,
+      fetcher
+    );
 
   const applications = data?.rows ?? [];
 
@@ -391,9 +394,12 @@ export default function ApplicationContent() {
             color="primary"
             variant="flat"
             onPress={() => mutate()}
-            isDisabled={isLoading}
+            isDisabled={isLoading || isValidating}
           >
-            <RefreshCcw size={16} />
+            <RefreshCcw
+              size={16}
+              className={isLoading || isValidating ? "animate-spin" : ""}
+            />
           </Button>
         </div>
       </div>
