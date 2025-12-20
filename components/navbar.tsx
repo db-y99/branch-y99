@@ -18,7 +18,7 @@ import NextLink from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, SearchIcon, Logo } from "@/components/icons";
+import { SearchIcon } from "@/components/icons";
 import { useAuth } from "@/contexts/auth-context";
 import {
   Avatar,
@@ -32,6 +32,7 @@ import {
 import { LogOut } from "lucide-react";
 import { generateAvatarUrl } from "@/utils/functions";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export const Navbar = () => {
   const { profile, logout } = useAuth();
@@ -64,12 +65,17 @@ export const Navbar = () => {
   };
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar maxWidth="2xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <Image
+              src="/favicon.ico"
+              alt="CMS Branch Y99"
+              width={32}
+              height={32}
+              priority
+            />
           </NextLink>
         </NavbarBrand>
         {/* <ul className="hidden lg:flex gap-4 justify-start ml-2">

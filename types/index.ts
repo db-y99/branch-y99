@@ -4,6 +4,17 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
+export type Branch = {
+  id: number;
+  code: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  country_code: string;
+  country_name: string;
+};
+
 export type Profile = {
   id: number;
   username: string;
@@ -11,6 +22,7 @@ export type Profile = {
   role: string;
   created_at: string;
   updated_at: string;
+  branch_id: Branch;
 };
 
 export type ApplicationFee = {

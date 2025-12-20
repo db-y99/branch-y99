@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "CMS Branch Management",
+  name: "Application Branch Y99",
   description: "Quản lý chi nhánh của bạn.",
   navItems: [
     {

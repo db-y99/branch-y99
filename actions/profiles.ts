@@ -57,7 +57,7 @@ export async function getProfileById(userId: string): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(`*, branch_id:branches(*)`)
     .eq("id", userId)
     .is("deleted_at", null)
     .single();

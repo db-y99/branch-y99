@@ -125,7 +125,7 @@ export default function ApplicationContent() {
 
   const statusQuery = React.useMemo(() => {
     if (statusFilter === 0) return "";
-    return statusFilter;
+    return `status=${statusFilter}`;
   }, [statusFilter]);
 
   const dateQuery = React.useMemo(() => {

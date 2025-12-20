@@ -24,8 +24,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: profileError.message }, { status: 500 });
   }
 
-  console.log({ profile });
-
   const filterObj: Record<string, any> = {
     create_time__date__gte: "2025-01-01",
   };
