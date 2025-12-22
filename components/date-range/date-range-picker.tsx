@@ -2,7 +2,7 @@
 
 import { DateInput } from "@/components/date-range/date-input";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { JSX, useCallback, useEffect, useRef, useState, type FC } from "react";
+import { JSX, useCallback, useEffect, useState, type FC } from "react";
 
 /* =========================
    HeroUI
@@ -66,7 +66,7 @@ const toCalendarDate = (date: Date): DateValue =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
       date.getDate()
     ).padStart(2, "0")}`
-  );
+  ) as DateValue;
 
 const fromCalendarDate = (value: DateValue): Date =>
   new Date(value.year, value.month - 1, value.day);
@@ -264,12 +264,14 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
           {/* CALENDAR */}
           <RangeCalendar
             visibleMonths={isSmallScreen ? 1 : 2}
-            value={{
-              start: toCalendarDate(range.from),
-              end: range.to
-                ? toCalendarDate(range.to)
-                : toCalendarDate(range.from),
-            }}
+            value={
+              {
+                start: toCalendarDate(range.from),
+                end: range.to
+                  ? toCalendarDate(range.to)
+                  : toCalendarDate(range.from),
+              } as RangeValue<DateValue>
+            }
             onChange={(value: RangeValue<DateValue>) => {
               if (!value?.start) return;
 
