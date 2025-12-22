@@ -40,7 +40,13 @@ export async function GET(request: Request) {
     filterObj.create_time__date__lte = to;
   }
 
-  if (profile?.branch_id.code !== "HQ") {
+  const { data: headquarter } = await supabase
+    .from("branches")
+    .select("code")
+    .eq("is_headquarter", true)
+    .single();
+
+  if (profile?.branch_id.code !== headquarter?.code) {
     filterObj["note__icontains"] = `#branch:${profile?.branch_id.code}`;
   }
 
