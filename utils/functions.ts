@@ -1,5 +1,3 @@
-import stringSimilarity from "string-similarity";
-
 export function generateAvatarUrl(name: string): string {
   if (!name) {
     return "";
