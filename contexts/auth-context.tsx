@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 import type { Profile } from "@/types";
+
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
+
 import { USER_ROLE } from "@/utils/constants";
 
 interface AuthContextType {
@@ -23,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check if current user is admin
   const isAdmin = useMemo(() => {
     if (!profile) return false;
+
     return profile.role === USER_ROLE.ADMIN;
   }, [profile]);
 

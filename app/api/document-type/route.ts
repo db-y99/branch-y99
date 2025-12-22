@@ -17,14 +17,16 @@ export async function GET(request: Request) {
         "Content-Type": "application/json",
       },
     });
+
     if (!response.ok) {
       throw new Error(`API call failed with status: ${response.status}`);
     }
     const data = await response.json();
+
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error fetching document type data:", error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

@@ -10,6 +10,7 @@ import {
   Button,
   Textarea,
 } from "@heroui/react";
+
 import { Application } from "@/types";
 import { updateApplicationNote } from "@/actions/applications";
 
@@ -82,30 +83,28 @@ export default function NotesModal({
             <ModalHeader className="flex flex-col gap-1">Ghi chú</ModalHeader>
             <ModalBody>
               <Textarea
-                label="Ghi chú"
-                value={note}
-                onValueChange={setNote}
-                rows={10}
                 className="w-full"
                 isDisabled={isLoading}
+                label="Ghi chú"
+                rows={10}
+                value={note}
+                onValueChange={setNote}
               />
-              {error && (
-                <div className="text-danger text-sm mt-2">{error}</div>
-              )}
+              {error && <div className="text-danger text-sm mt-2">{error}</div>}
             </ModalBody>
             <ModalFooter>
               <Button
                 color="danger"
+                isDisabled={isLoading}
                 variant="light"
                 onPress={onClose}
-                isDisabled={isLoading}
               >
                 Đóng
               </Button>
               <Button
                 color="primary"
-                onPress={handleSave}
                 isLoading={isLoading}
+                onPress={handleSave}
               >
                 Lưu
               </Button>

@@ -9,14 +9,14 @@ export async function POST(request: Request) {
     if (!filePaths || !Array.isArray(filePaths) || filePaths.length === 0) {
       return NextResponse.json(
         { error: "File paths array is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!loginId) {
       return NextResponse.json(
         { error: "Login ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
           const arrayBuffer = await response.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
           const fileName = filePath.split("/").pop() || filePath;
+
           archive.append(buffer, { name: fileName });
         }
       } catch (error) {
@@ -79,6 +80,7 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error("Error creating zip file:", error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

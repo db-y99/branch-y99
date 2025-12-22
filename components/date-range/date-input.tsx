@@ -14,6 +14,7 @@ interface DateParts {
 const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
   const [date, setDate] = React.useState<DateParts>(() => {
     const d = value ? new Date(value) : new Date();
+
     return {
       day: d.getDate(),
       month: d.getMonth() + 1, // JavaScript months are 0-indexed
@@ -35,6 +36,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
         month: d.getMonth() + 1,
         year: d.getFullYear(),
       };
+
       // Schedule update asynchronously to avoid synchronous setState in effect
       startTransition(() => {
         setDate(newDateParts);
@@ -55,6 +57,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
     // Validate the day of the month
     const newDate = { ...date, [field]: value };
     const d = new Date(newDate.year, newDate.month - 1, newDate.day);
+
     return (
       d.getFullYear() === newDate.year &&
       d.getMonth() + 1 === newDate.month &&
@@ -70,6 +73,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
 
       // If the new value is valid, update the date
       const newDate = { ...date, [field]: newValue };
+
       setDate(newDate);
 
       // only call onChange when the entry is valid
@@ -85,6 +89,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
     (e: React.FocusEvent<HTMLInputElement>): void => {
       if (!e.target.value) {
         setDate(initialDate.current);
+
         return;
       }
 
@@ -121,6 +126,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
         ].includes(e.key)
       ) {
         e.preventDefault();
+
         return;
       }
 
@@ -210,57 +216,57 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
   return (
     <div className="flex border rounded-lg items-center text-sm px-1">
       <input
-        type="text"
         ref={monthRef}
+        className="p-0 outline-none w-6 border-none text-center"
         max={12}
         maxLength={2}
+        placeholder="M"
+        type="text"
         value={date.month.toString()}
+        onBlur={handleBlur("month")}
         onChange={handleInputChange("month")}
-        onKeyDown={handleKeyDown("month")}
         onFocus={(e) => {
           if (window.innerWidth > 1024) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("month")}
-        className="p-0 outline-none w-6 border-none text-center"
-        placeholder="M"
+        onKeyDown={handleKeyDown("month")}
       />
       <span className="opacity-20 -mx-px">/</span>
       <input
-        type="text"
         ref={dayRef}
+        className="p-0 outline-none w-7 border-none text-center"
         max={31}
         maxLength={2}
+        placeholder="D"
+        type="text"
         value={date.day.toString()}
+        onBlur={handleBlur("day")}
         onChange={handleInputChange("day")}
-        onKeyDown={handleKeyDown("day")}
         onFocus={(e) => {
           if (window.innerWidth > 1024) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("day")}
-        className="p-0 outline-none w-7 border-none text-center"
-        placeholder="D"
+        onKeyDown={handleKeyDown("day")}
       />
       <span className="opacity-20 -mx-px">/</span>
       <input
-        type="text"
         ref={yearRef}
+        className="p-0 outline-none w-12 border-none text-center"
         max={9999}
         maxLength={4}
+        placeholder="YYYY"
+        type="text"
         value={date.year.toString()}
+        onBlur={handleBlur("year")}
         onChange={handleInputChange("year")}
-        onKeyDown={handleKeyDown("year")}
         onFocus={(e) => {
           if (window.innerWidth > 1024) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("year")}
-        className="p-0 outline-none w-12 border-none text-center"
-        placeholder="YYYY"
+        onKeyDown={handleKeyDown("year")}
       />
     </div>
   );

@@ -9,6 +9,7 @@ async function fetcher(url: string) {
 
   if (!response.ok) {
     const error = new Error("An error occurred while fetching the data.");
+
     // Attach extra info to the error object
     (error as Error & { status?: number }).status = response.status;
     throw error;

@@ -27,7 +27,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
     const valuesParam =
       "id,username,password,avatar,fullname,display_name,type__code,type__name,blocked,block_reason,block_reason__code,block_reason__name,blocked_by,last_login,auth_method,auth_method__code,auth_method__name,auth_status,auth_status__code,auth_status__name,register_method,register_method__code,register_method__name,create_time,update_time";
     const url = `${apiUrl}/login/?values=${valuesParam}&filter=${encodeURIComponent(
-      filter
+      filter,
     )}`;
 
     const response = await fetch(url);
@@ -46,6 +46,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
     const text = await response.text();
 
     let data: any;
+
     try {
       data = text ? JSON.parse(text) : null;
     } catch {
@@ -80,11 +81,12 @@ export async function loginAction(_prevState: any, formData: FormData) {
     const { error: insertError } = await createProfileIfNotExists(
       id,
       username,
-      fullName
+      fullName,
     );
 
     if (insertError) {
       console.error("Failed to create profile:", insertError);
+
       return {
         status: "error",
         errors: {
@@ -93,12 +95,14 @@ export async function loginAction(_prevState: any, formData: FormData) {
         },
       };
     }
+
     return {
       status: "success",
       data: data.rows,
     };
   } catch (err) {
     console.error(err);
+
     return {
       status: "error",
       errors: {

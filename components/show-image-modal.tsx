@@ -33,6 +33,7 @@ export default function ShowImageModal({
     // Use API route to download file
     const downloadUrl = `/api/download-file?path=${encodeURIComponent(imagePath)}&loginId=${loginId}`;
     const link = document.createElement("a");
+
     link.href = downloadUrl;
     link.download = imagePath.split("/").pop() || imageAlt || "image";
     document.body.appendChild(link);
@@ -43,7 +44,7 @@ export default function ShowImageModal({
   if (!imageUrl) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="5xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="5xl" onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -52,16 +53,16 @@ export default function ShowImageModal({
             </ModalHeader>
             <ModalBody className="flex items-center justify-center p-6">
               <Image
-                src={imageUrl}
                 alt={imageAlt}
                 className="max-w-full max-h-[80vh] object-contain"
+                src={imageUrl}
               />
             </ModalBody>
             <ModalFooter>
               <Button
                 color="primary"
-                variant="flat"
                 startContent={<Download size={16} />}
+                variant="flat"
                 onPress={handleDownloadImage}
               >
                 Tải xuống

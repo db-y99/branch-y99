@@ -10,9 +10,10 @@ import {
   Divider,
   addToast,
 } from "@heroui/react";
+import { useRouter } from "next/navigation";
+
 import { loginAction } from "@/actions/auth";
 import { Logo } from "@/components/icons";
-import { useRouter } from "next/navigation";
 import SubmitButton from "@/components/submit-button";
 
 export default function LoginPage() {
@@ -35,7 +36,7 @@ export default function LoginPage() {
         id: state?.data?.id,
         username: state?.data?.username,
         fullname: state?.data?.fullname,
-      })
+      }),
     );
 
     addToast({
@@ -51,6 +52,7 @@ export default function LoginPage() {
     if (!state?.errors) return;
 
     const hasError = Object.values(state.errors).some(Boolean);
+
     if (!hasError) return;
 
     addToast({
@@ -82,11 +84,11 @@ export default function LoginPage() {
 
             <Form
               action={formAction}
+              className="w-full justify-center items-center space-y-4 h-full"
               validationErrors={state?.errors}
               onSubmit={() => {
                 hasSubmittedRef.current = true;
               }}
-              className="w-full justify-center items-center space-y-4 h-full"
             >
               <div className="flex flex-col gap-4 w-full max-w-md">
                 <Input
@@ -136,8 +138,8 @@ export default function LoginPage() {
           <p className="text-sm text-default-500">
             Cần hỗ trợ?{" "}
             <a
-              href="mailto:support@easyapprove.com"
               className="text-primary hover:underline font-medium"
+              href="mailto:support@easyapprove.com"
             >
               Liên hệ chúng tôi
             </a>

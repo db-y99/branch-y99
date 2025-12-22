@@ -1,23 +1,16 @@
 "use client";
 
-import { DateInput } from "@/components/date-range/date-input";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { JSX, useCallback, useEffect, useState, type FC } from "react";
+import type { DateValue, RangeValue } from "@heroui/calendar";
 
-/* =========================
-   HeroUI
-========================= */
+import { JSX, useCallback, useEffect, useState, type FC } from "react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Button } from "@heroui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { RangeCalendar } from "@heroui/calendar";
 import { Switch } from "@heroui/switch";
-
-/* =========================
-   Date (NO timezone magic)
-========================= */
 import { parseDate } from "@internationalized/date";
-import type { DateValue } from "@internationalized/date";
-import type { RangeValue } from "@heroui/calendar";
+
+import { DateInput } from "@/components/date-range/date-input";
 
 /* =========================
    Types
@@ -56,8 +49,10 @@ const formatDate = (date: Date, locale = "en-US"): string =>
 const getDateAdjustedForTimezone = (input: Date | string): Date => {
   if (typeof input === "string") {
     const [y, m, d] = input.split("-").map(Number);
+
     return new Date(y, m - 1, d);
   }
+
   return input;
 };
 
@@ -66,7 +61,7 @@ const toCalendarDate = (date: Date): DateValue =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
       date.getDate()
     ).padStart(2, "0")}`
-  ) as DateValue;
+  ) as unknown as DateValue;
 
 const fromCalendarDate = (value: DateValue): Date =>
   new Date(value.year, value.month - 1, value.day);
@@ -126,8 +121,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   ========================= */
   useEffect(() => {
     const onResize = () => setIsSmallScreen(window.innerWidth < 960);
+
     onResize();
     window.addEventListener("resize", onResize);
+
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
@@ -180,6 +177,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
   const applyPreset = (preset: string) => {
     const next = getPresetRange(preset);
+
     setRange(next);
     setSelectedPreset(preset);
 
@@ -207,7 +205,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   return (
     <Popover isOpen={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <PopoverTrigger>
-        <Button variant="bordered" size="lg">
+        <Button size="lg" variant="bordered">
           <div className="text-right">
             <div>
               {formatDate(range.from, locale)}
@@ -263,7 +261,6 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         <div className="flex gap-4">
           {/* CALENDAR */}
           <RangeCalendar
-            visibleMonths={isSmallScreen ? 1 : 2}
             value={
               {
                 start: toCalendarDate(range.from),
@@ -272,6 +269,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                   : toCalendarDate(range.from),
               } as RangeValue<DateValue>
             }
+            visibleMonths={isSmallScreen ? 1 : 2}
             onChange={(value: RangeValue<DateValue>) => {
               if (!value?.start) return;
 
@@ -289,10 +287,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
               return (
                 <Button
                   key={preset.name}
+                  className="justify-start"
+                  color={isActive ? "primary" : "default"}
                   size="sm"
                   variant={isActive ? "solid" : "light"}
-                  color={isActive ? "primary" : "default"}
-                  className="justify-start"
                   onPress={() => applyPreset(preset.name)}
                 >
                   {preset.label}

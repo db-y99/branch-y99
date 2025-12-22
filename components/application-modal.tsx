@@ -10,6 +10,8 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Download } from "lucide-react";
+import useSWR from "swr";
+
 import {
   Application,
   ApplicationFile,
@@ -20,7 +22,6 @@ import {
   APPLICATION_FILE_TYPE_MAP,
   APPLICATION_STATUS_MAP,
 } from "@/utils/constants";
-import useSWR from "swr";
 import { fetcher } from "@/utils/fetcher";
 import { getFileUrl, formatDateTimeVN } from "@/utils/functions";
 import ShowImageModal from "@/components/show-image-modal";
@@ -124,14 +125,15 @@ export default function ApplicationModal({
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
+
       link.href = url;
       link.download = folderName || "files.zip";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading zip file:", error);
+    } catch {
+      // Error downloading zip file
     }
   };
 
@@ -140,8 +142,10 @@ export default function ApplicationModal({
 
   // Group files by document type code (one doc type can have multiple files)
   const filesByDocType = new Map<string, ApplicationFile[]>();
+
   files.forEach((file) => {
     const code = file.file__doc_type__code;
+
     if (!filesByDocType.has(code)) {
       filesByDocType.set(code, []);
     }
@@ -186,8 +190,6 @@ export default function ApplicationModal({
     }))
     .filter((item) => item.docType) // Only include if docType exists
     .sort((a, b) => (a.docType?.index || 0) - (b.docType?.index || 0));
-
-  console.log({ otherDocTypesWithFiles });
 
   return (
     <>
@@ -312,10 +314,10 @@ export default function ApplicationModal({
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-lg font-semibold">Hồ sơ</div>
                     <Button
-                      size="sm"
                       color="primary"
-                      variant="flat"
+                      size="sm"
                       startContent={<Download size={16} />}
+                      variant="flat"
                       onPress={() => {
                         const allPrimaryFiles = primaryDocTypes
                           .map((item) => item.file)
@@ -323,6 +325,7 @@ export default function ApplicationModal({
                             (file): file is ApplicationFile =>
                               file !== undefined
                           );
+
                         if (allPrimaryFiles.length > 0) {
                           handleDownloadAllFiles(allPrimaryFiles, "Ho-so.zip");
                         }
@@ -350,6 +353,7 @@ export default function ApplicationModal({
                                   const imageUrl = getFileUrl(
                                     item.file.file__file
                                   );
+
                                   if (imageUrl) {
                                     handleImageClick(
                                       imageUrl,
@@ -383,6 +387,7 @@ export default function ApplicationModal({
                         {otherDocTypesWithFiles.map(
                           ({ docType, files: docFiles }) => {
                             if (!docType) return null;
+
                             return (
                               <div key={docType.id} className="space-y-2 mb-4">
                                 <div className="flex items-center justify-between">
@@ -391,10 +396,10 @@ export default function ApplicationModal({
                                   </div>
                                   {docFiles.length > 0 && (
                                     <Button
-                                      size="sm"
                                       color="primary"
-                                      variant="flat"
+                                      size="sm"
                                       startContent={<Download size={14} />}
+                                      variant="flat"
                                       onPress={() =>
                                         handleDownloadAllFiles(
                                           docFiles,
@@ -424,6 +429,7 @@ export default function ApplicationModal({
                                                 const imageUrl = getFileUrl(
                                                   file.file__file
                                                 );
+
                                                 if (imageUrl) {
                                                   handleImageClick(
                                                     imageUrl,
@@ -471,12 +477,12 @@ export default function ApplicationModal({
       {/* Image Viewer Modal */}
       {isImageViewerOpen && selectedImage && (
         <ShowImageModal
-          isOpen={isImageViewerOpen}
-          onClose={handleCloseImageViewer}
-          imageUrl={selectedImage}
           imageAlt={selectedImageAlt}
           imagePath={selectedImagePath}
+          imageUrl={selectedImage}
+          isOpen={isImageViewerOpen}
           loginId={loginId}
+          onClose={handleCloseImageViewer}
         />
       )}
     </>

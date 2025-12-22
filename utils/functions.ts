@@ -5,6 +5,7 @@ export function generateAvatarUrl(name: string): string {
   // Generate a simple avatar URL from ui-avatars.com
   // You can customize parameters like background color, text color, size, etc.
   const encodedName = encodeURIComponent(name);
+
   return `https://ui-avatars.com/api/?name=${encodedName}&background=random&color=fff&size=128`;
 }
 
@@ -12,6 +13,7 @@ export function formatDate(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
+
   return `${y}-${m}-${d}`;
 }
 
@@ -43,5 +45,6 @@ export const getDefaultDateRange = () => {
 
 export const getFileUrl = (file: string) => {
   if (!file) return;
+
   return `${process.env.NEXT_PUBLIC_API_URL}/static/files/${file}`;
 };

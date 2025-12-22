@@ -3,7 +3,7 @@
 import { UpdateApplicationNoteParams } from "@/types";
 
 export async function updateApplicationNote(
-  params: UpdateApplicationNoteParams
+  params: UpdateApplicationNoteParams,
 ): Promise<{ success: boolean; error?: string }> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const { id, loginId, ...body } = params;
@@ -24,14 +24,16 @@ export async function updateApplicationNote(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+
       throw new Error(
-        errorData.message || `API call failed with status: ${response.status}`
+        errorData.message || `API call failed with status: ${response.status}`,
       );
     }
 
     return { success: true };
   } catch (error: any) {
     console.error("Error updating application note:", error);
+
     return { success: false, error: error.message || "Failed to update note" };
   }
 }

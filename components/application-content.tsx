@@ -1,5 +1,7 @@
 "use client";
 
+import type { SortDescriptor } from "@heroui/react";
+
 import React from "react";
 import useSWR from "swr";
 import {
@@ -22,13 +24,14 @@ import {
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
-import type { SortDescriptor } from "@heroui/react";
-import { SearchIcon, ChevronDownIcon } from "./icons";
 import { PlusIcon, RefreshCcw, StickyNote } from "lucide-react";
+
+import { SearchIcon, ChevronDownIcon } from "./icons";
+import { DateRangePicker } from "./date-range/date-range-picker";
+
 import { fetcher } from "@/utils/fetcher";
 import { Application, ApplicationListResponse, StatusOption } from "@/types";
 import { useAuth } from "@/contexts/auth-context";
-import { DateRangePicker } from "./date-range/date-range-picker";
 import {
   formatDate,
   formatDateTimeVN,
@@ -114,7 +117,7 @@ export default function ApplicationContent() {
   const [filterValue, setFilterValue] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<number>(0);
   const [visibleColumns, setVisibleColumns] = React.useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = React.useState(ROWS_PER_PAGE);
   const [page, setPage] = React.useState(1);
@@ -125,6 +128,7 @@ export default function ApplicationContent() {
 
   const statusQuery = React.useMemo(() => {
     if (statusFilter === 0) return "";
+
     return `status=${statusFilter}`;
   }, [statusFilter]);
 
@@ -136,6 +140,7 @@ export default function ApplicationContent() {
 
   const queryString = React.useMemo(() => {
     const params = [statusQuery, dateQuery].filter(Boolean);
+
     return params.length ? `&${params.join("&")}` : "";
   }, [statusQuery, dateQuery]);
 
@@ -144,7 +149,7 @@ export default function ApplicationContent() {
       profile?.id
         ? `/api/application?loginId=${profile.id}${queryString}`
         : null,
-      fetcher
+      fetcher,
     );
 
   const applications = data?.rows ?? [];
@@ -156,7 +161,7 @@ export default function ApplicationContent() {
 
     if (filterValue) {
       items = items.filter((app) =>
-        app.fullname.toLowerCase().includes(filterValue.toLowerCase())
+        app.fullname.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -169,6 +174,7 @@ export default function ApplicationContent() {
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
+
     return filteredItems.slice(start, start + rowsPerPage);
   }, [page, filteredItems, rowsPerPage]);
 
@@ -183,6 +189,7 @@ export default function ApplicationContent() {
         return sortDescriptor.direction === "ascending" ? -1 : 1;
       if (first > second)
         return sortDescriptor.direction === "ascending" ? 1 : -1;
+
       return 0;
     });
   }, [items, sortDescriptor]);
@@ -191,6 +198,7 @@ export default function ApplicationContent() {
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns.size === columns.length) return columns;
+
     return columns.filter((c) => Array.from(visibleColumns).includes(c.uid));
   }, [visibleColumns]);
 
@@ -202,9 +210,9 @@ export default function ApplicationContent() {
         case "code":
           return (
             <Button
+              className="text-primary text-sm"
               size="sm"
               variant="light"
-              className="text-primary text-sm"
               onPress={() => {
                 setSelectedApplication(app);
                 onApplicationModalOpen();
@@ -257,26 +265,27 @@ export default function ApplicationContent() {
 
         case "status":
           return (
-            <Chip size="sm" color={APPLICATION_STATUS_MAP[app.status].color}>
+            <Chip color={APPLICATION_STATUS_MAP[app.status].color} size="sm">
               {APPLICATION_STATUS_MAP[app.status].label}
             </Chip>
           );
         case "note":
           const hasNote = app.note?.trim();
+
           return (
             <Button
-              size="sm"
               isIconOnly
-              variant={hasNote ? "flat" : "light"}
               color={hasNote ? "primary" : "default"}
+              size="sm"
               startContent={
                 hasNote ? <StickyNote size={16} /> : <PlusIcon size={16} />
               }
+              variant={hasNote ? "flat" : "light"}
               onPress={() => {
                 setSelectedApplication(app);
                 onNotesModalOpen();
               }}
-            ></Button>
+            />
           );
         case "create_time":
           return (
@@ -315,7 +324,7 @@ export default function ApplicationContent() {
           return app[columnKey as keyof Application];
       }
     },
-    []
+    [],
   );
 
   /* ================= TOP CONTENT ================= */
@@ -352,11 +361,12 @@ export default function ApplicationContent() {
 
         <div className="flex gap-2 items-center">
           <Select
-            selectedKeys={[String(statusFilter)]}
             className="w-3xs"
             placeholder="Status"
+            selectedKeys={[String(statusFilter)]}
             onSelectionChange={(keys) => {
               const value = Number(keys.currentKey);
+
               setStatusFilter(value);
               setPage(1);
             }}
@@ -370,16 +380,16 @@ export default function ApplicationContent() {
           <Dropdown>
             <DropdownTrigger className="hidden sm:flex">
               <Button
-                variant="flat"
                 endContent={<ChevronDownIcon className="text-small" />}
+                variant="flat"
               >
                 Columns
               </Button>
             </DropdownTrigger>
             <DropdownMenu
-              selectionMode="multiple"
               disallowEmptySelection
               selectedKeys={visibleColumns}
+              selectionMode="multiple"
               onSelectionChange={(keys) =>
                 setVisibleColumns(new Set(keys as Iterable<string>))
               }
@@ -392,13 +402,13 @@ export default function ApplicationContent() {
           <Button
             isIconOnly
             color="primary"
+            isDisabled={isLoading || isValidating}
             variant="flat"
             onPress={() => mutate()}
-            isDisabled={isLoading || isValidating}
           >
             <RefreshCcw
-              size={16}
               className={isLoading || isValidating ? "animate-spin" : ""}
+              size={16}
             />
           </Button>
         </div>
@@ -449,19 +459,19 @@ export default function ApplicationContent() {
       <Table
         isHeaderSticky
         aria-label="Application table"
-        topContent={topContent}
-        topContentPlacement="outside"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
             <TableColumn
               key={column.uid}
-              allowsSorting={column.sortable}
               align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
             >
               {column.name}
             </TableColumn>
@@ -469,8 +479,8 @@ export default function ApplicationContent() {
         </TableHeader>
 
         <TableBody
-          items={sortedItems}
           emptyContent={isLoading ? "Loading..." : "No applications"}
+          items={sortedItems}
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -483,17 +493,17 @@ export default function ApplicationContent() {
       </Table>
       {isApplicationModalOpen && selectedApplication && profile && (
         <ApplicationModal
-          loginId={profile?.id}
           application={selectedApplication}
           isOpen={isApplicationModalOpen}
+          loginId={profile?.id}
           onClose={onApplicationModalClose}
         />
       )}
       {isNotesModalOpen && (
         <NotesModal
           application={selectedApplication}
-          loginId={profile?.id || 0}
           isOpen={isNotesModalOpen}
+          loginId={profile?.id || 0}
           onClose={onNotesModalClose}
           onSuccess={() => {
             mutate(); // Refresh data after update

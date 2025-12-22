@@ -9,17 +9,10 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-
 import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
-
 import NextLink from "next/link";
-
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { SearchIcon } from "@/components/icons";
-import { useAuth } from "@/contexts/auth-context";
 import {
   Avatar,
   Dropdown,
@@ -30,9 +23,14 @@ import {
   User,
 } from "@heroui/react";
 import { LogOut } from "lucide-react";
-import { generateAvatarUrl } from "@/utils/functions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+import { siteConfig } from "@/config/site";
+import { ThemeSwitch } from "@/components/theme-switch";
+import { SearchIcon } from "@/components/icons";
+import { useAuth } from "@/contexts/auth-context";
+import { generateAvatarUrl } from "@/utils/functions";
 
 export const Navbar = () => {
   const { profile, logout } = useAuth();
@@ -70,11 +68,11 @@ export const Navbar = () => {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image
-              src="/favicon.ico"
-              alt="CMS Branch Y99"
-              width={32}
-              height={32}
               priority
+              alt="CMS Branch Y99"
+              height={32}
+              src="/favicon.ico"
+              width={32}
             />
           </NextLink>
         </NavbarBrand>
@@ -126,18 +124,18 @@ export const Navbar = () => {
                     textValue="Profile"
                   >
                     <User
-                      name={profile.full_name || "User"}
-                      description={profile.username}
+                      avatarProps={{
+                        size: "sm",
+                        src: generateAvatarUrl(
+                          profile.full_name || profile.username,
+                        ),
+                      }}
                       classNames={{
                         name: "text-default-600 font-semibold",
                         description: "text-default-500",
                       }}
-                      avatarProps={{
-                        size: "sm",
-                        src: generateAvatarUrl(
-                          profile.full_name || profile.username
-                        ),
-                      }}
+                      description={profile.username}
+                      name={profile.full_name || "User"}
                     />
                   </DropdownItem>
                 </DropdownSection>

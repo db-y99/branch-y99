@@ -1,5 +1,6 @@
-import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
+
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -16,10 +17,11 @@ export async function GET(request: Request) {
       `
       *,
       branch_id:branches(*)
-      `
+      `,
     )
     .eq("id", loginId)
     .single();
+
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 500 });
   }
@@ -58,6 +60,7 @@ export async function GET(request: Request) {
         "Content-Type": "application/json",
       },
     });
+
     if (!response.ok) {
       throw new Error(`API call failed with status: ${response.status}`);
     }
@@ -70,6 +73,7 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error("Error fetching application data:", error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { Profile } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getProfileByUsername(
-  username: string
+  username: string,
 ): Promise<{ data: Profile | null; error: any }> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -19,7 +19,7 @@ export async function getProfileByUsername(
 export async function createProfileIfNotExists(
   id: number,
   username: string,
-  fullName: string | null
+  fullName: string | null,
 ): Promise<{ error: any }> {
   const supabase = await createClient();
 
@@ -64,6 +64,7 @@ export async function getProfileById(userId: string): Promise<Profile | null> {
 
   if (error) {
     console.error("Error fetching profile:", error);
+
     return null;
   }
 

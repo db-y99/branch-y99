@@ -10,8 +10,8 @@ export default function SubmitButton() {
     <Button
       className="w-full"
       color="primary"
-      type="submit"
       isDisabled={pending}
+      type="submit"
     >
       {pending ? (
         <>

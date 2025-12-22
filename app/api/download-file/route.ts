@@ -8,14 +8,14 @@ export async function GET(request: Request) {
   if (!loginId) {
     return NextResponse.json(
       { error: "Login ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (!filePath) {
     return NextResponse.json(
       { error: "File path is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -48,6 +48,7 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error("Error downloading file:", error);
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ToastProvider } from "@heroui/react";
+
 import { AuthProvider } from "@/contexts/auth-context";
 import { getProfileById } from "@/actions/profiles";
 import { Profile } from "@/types";
@@ -59,7 +60,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
         <AuthProvider>
-          <ClientSync profile={profile}></ClientSync>
+          <ClientSync profile={profile} />
           <ToastProvider />
           <SWRProvider>{children}</SWRProvider>
         </AuthProvider>
