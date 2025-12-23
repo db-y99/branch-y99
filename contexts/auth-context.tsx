@@ -9,6 +9,7 @@ import { USER_ROLE } from "@/utils/constants";
 interface AuthContextType {
   profile: Profile | null;
   isAdmin: boolean;
+  isAuthenticated: boolean;
   setAuthData: (profile: Profile | null) => void;
   logout: () => void;
 }
@@ -16,6 +17,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated] = useState(() => {
+    return typeof window !== "undefined" && !!localStorage.getItem("user");
+  });
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const setAuthData = (profile: Profile | null) => {
@@ -26,7 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = useMemo(() => {
     if (!profile) return false;
 
-    return profile.role === USER_ROLE.ADMIN;
+    // Check both legacy role field and new roles.code
+    return profile.roles?.code === USER_ROLE.ADMIN;
   }, [profile]);
 
   const logout = () => {
@@ -35,7 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ profile, isAdmin, setAuthData, logout }}>
+    <AuthContext.Provider
+      value={{ profile, isAdmin, isAuthenticated, setAuthData, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

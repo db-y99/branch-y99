@@ -117,7 +117,7 @@ export default function ApplicationContent() {
   const [filterValue, setFilterValue] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<number>(0);
   const [visibleColumns, setVisibleColumns] = React.useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
+    new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [rowsPerPage, setRowsPerPage] = React.useState(ROWS_PER_PAGE);
   const [page, setPage] = React.useState(1);
@@ -149,7 +149,7 @@ export default function ApplicationContent() {
       profile?.id
         ? `/api/application?loginId=${profile.id}${queryString}`
         : null,
-      fetcher,
+      fetcher
     );
 
   const applications = data?.rows ?? [];
@@ -161,7 +161,7 @@ export default function ApplicationContent() {
 
     if (filterValue) {
       items = items.filter((app) =>
-        app.fullname.toLowerCase().includes(filterValue.toLowerCase()),
+        app.fullname.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -324,7 +324,7 @@ export default function ApplicationContent() {
           return app[columnKey as keyof Application];
       }
     },
-    [],
+    []
   );
 
   /* ================= TOP CONTENT ================= */

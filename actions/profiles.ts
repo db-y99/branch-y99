@@ -4,12 +4,12 @@ import { Profile } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getProfileByUsername(
-  username: string,
+  username: string
 ): Promise<{ data: Profile | null; error: any }> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, username, full_name, role")
+    .select("id, username, full_name, role_id")
     .eq("username", username)
     .maybeSingle();
 
@@ -19,7 +19,7 @@ export async function getProfileByUsername(
 export async function createProfileIfNotExists(
   id: number,
   username: string,
-  fullName: string | null,
+  fullName: string | null
 ): Promise<{ error: any }> {
   const supabase = await createClient();
 
@@ -57,16 +57,17 @@ export async function getProfileById(userId: string): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select(`*, branch_id:branches(*)`)
+    .select(`*, branch_id:branches(*), roles:roles(id,code,name)`)
     .eq("id", userId)
     .is("deleted_at", null)
-    .single();
+    .maybeSingle();
 
-  if (error) {
-    console.error("Error fetching profile:", error);
-
+  // PGRST116 is "no rows returned", which is expected if profile doesn't exist
+  if (error && error.code !== "PGRST116") {
     return null;
   }
+
+  if (!data) return null;
 
   return data as Profile;
 }

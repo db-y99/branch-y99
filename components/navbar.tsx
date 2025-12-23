@@ -23,7 +23,6 @@ import {
   User,
 } from "@heroui/react";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import { siteConfig } from "@/config/site";
@@ -31,10 +30,11 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { SearchIcon } from "@/components/icons";
 import { useAuth } from "@/contexts/auth-context";
 import { generateAvatarUrl } from "@/utils/functions";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
-  const { profile, logout } = useAuth();
   const router = useRouter();
+  const { profile, logout } = useAuth();
 
   const searchInput = (
     <Input
@@ -127,7 +127,7 @@ export const Navbar = () => {
                       avatarProps={{
                         size: "sm",
                         src: generateAvatarUrl(
-                          profile.full_name || profile.username,
+                          profile.full_name || profile.username
                         ),
                       }}
                       classNames={{

@@ -15,14 +15,23 @@ export type Branch = {
   country_name: string;
 };
 
+export type Role = {
+  id: string;
+  code: string;
+  name: string;
+};
+
 export type Profile = {
   id: number;
   username: string;
   full_name: string | null;
-  role: string;
+  // Deprecated: legacy role string on profiles table
+  role?: string | null;
   created_at: string;
   updated_at: string;
   branch_id: Branch;
+  role_id: string | null;
+  roles: Role | null;
 };
 
 export type ApplicationFee = {

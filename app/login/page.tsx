@@ -15,8 +15,9 @@ import { useRouter } from "next/navigation";
 import { loginAction } from "@/actions/auth";
 import { Logo } from "@/components/icons";
 import SubmitButton from "@/components/submit-button";
+import PublicRoute from "@/components/public-route";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const hasSubmittedRef = useRef(false);
   const [state, formAction] = useActionState(loginAction, {
@@ -36,7 +37,7 @@ export default function LoginPage() {
         id: state?.data?.id,
         username: state?.data?.username,
         fullname: state?.data?.fullname,
-      }),
+      })
     );
 
     addToast({
@@ -147,5 +148,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <PublicRoute>
+      <LoginForm />
+    </PublicRoute>
   );
 }
