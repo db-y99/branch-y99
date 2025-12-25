@@ -1,12 +1,12 @@
 import AppLayout from "@/components/app-layout";
-import HomeContent from "@/components/home-content";
+import ApplicationContent from "@/components/application-content";
 import ProtectedRoute from "@/components/protected-route";
 
-export default function Home() {
+export default function ApplicationPage() {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <HomeContent />
+        <ApplicationContent />
       </AppLayout>
     </ProtectedRoute>
   );

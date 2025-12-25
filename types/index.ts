@@ -123,6 +123,7 @@ export type Application = {
 
 export type ApplicationListResponse = {
   total_rows: number;
+  is_profile_headquarter: boolean;
   full_data: boolean;
   rows: Application[];
 };

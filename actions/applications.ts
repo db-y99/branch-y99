@@ -1,10 +1,12 @@
 "use server";
 
 import { UpdateApplicationNoteParams } from "@/types";
+import { createClient } from "@/utils/supabase/server";
 
 export async function updateApplicationNote(
-  params: UpdateApplicationNoteParams,
+  params: UpdateApplicationNoteParams
 ): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const { id, loginId, ...body } = params;
 
@@ -26,8 +28,17 @@ export async function updateApplicationNote(
       const errorData = await response.json().catch(() => ({}));
 
       throw new Error(
-        errorData.message || `API call failed with status: ${response.status}`,
+        errorData.message || `API call failed with status: ${response.status}`
       );
+    }
+
+    const { error } = await supabase
+      .from("application_records")
+      .update({ note: body.note })
+      .eq("id", id);
+
+    if (error) {
+      throw new Error(error.message);
     }
 
     return { success: true };

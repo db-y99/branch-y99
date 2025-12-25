@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       `
       *,
       branch_id:branches(*)
-      `,
+      `
     )
     .eq("id", loginId)
     .single();
