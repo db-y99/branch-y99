@@ -45,7 +45,10 @@ function LoginForm() {
       description: "Bạn đã đăng nhập thành công",
       color: "success",
     });
-    router.push("/");
+    
+    // Force reload to ensure AuthProvider fetches profile
+    // This prevents race condition between login and route protection
+    window.location.href = "/";
   }, [state?.data]);
 
   useEffect(() => {

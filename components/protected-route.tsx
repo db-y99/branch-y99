@@ -10,19 +10,23 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    // Wait for auth to finish loading
+    if (loading) return;
+
     if (!isAuthenticated) {
       router.replace("/login");
       return;
     }
     setChecked(true);
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, loading, router]);
 
-  if (!checked) {
-    return null; // tránh flash content
+  // Don't render until auth is loaded and checked
+  if (loading || !checked) {
+    return null;
   }
 
   return <>{children}</>;

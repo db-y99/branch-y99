@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -9,26 +10,23 @@ interface PublicRouteProps {
 
 export default function PublicRoute({ children }: PublicRouteProps) {
   const router = useRouter();
+  const { isAuthenticated, loading } = useAuth();
   const [checked, setChecked] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      setChecked(true);
+    // Wait for auth to finish loading
+    if (loading) return;
+
+    if (isAuthenticated) {
       router.replace("/");
       return;
     }
 
-    setShouldRender(true);
     setChecked(true);
-  }, [router]);
+  }, [isAuthenticated, loading, router]);
 
-  if (!checked) {
-    return null; // Prevent flash of content before redirect
-  }
-
-  if (!shouldRender) {
+  // Don't render until auth is loaded and checked
+  if (loading || !checked) {
     return null;
   }
 
