@@ -117,6 +117,12 @@ export type Application = {
   history: number;
   ability: number;
 
+  customer__code: string;
+  country__name: string;
+
+  product__type__name: string;
+  product__category__name: string;
+
   doc_audit: number;
   onsite_audit: number;
 };
@@ -181,4 +187,35 @@ export type UpdateApplicationNoteParams = {
   sex: number;
   legal_type: number;
   loginId: number;
+};
+
+export type ContractDocument = {
+  en: string;
+  pdf: string;
+  code: string;
+  file: string;
+  name: string;
+};
+
+export type Contract = {
+  id: number;
+  application: number;
+  content: string;
+  signature: number;
+  user: number | null;
+  user__fullname: string | null;
+  signature__file: string;
+  status: number;
+  status__code: string;
+  status__name: string;
+  link: string;
+  document: ContractDocument[];
+  create_time: string;
+  update_time: string;
+};
+
+export type ContractResponse = {
+  total_rows: number;
+  full_data: boolean;
+  rows: Contract[];
 };

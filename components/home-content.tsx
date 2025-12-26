@@ -182,12 +182,14 @@ export default function HomeContent() {
   const applications = data?.rows ?? [];
   const totalRows = data?.total_rows || 0;
 
+  console.log({ applications });
+
   /* ================= SYNC HANDLER ================= */
 
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      const response = await fetch("/api/application/sync", {
+      const response = await fetch("/api/application/sync/super", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -394,7 +396,6 @@ export default function HomeContent() {
           return (app as any).loanapp__code || "/";
         case "branch_uuid":
           const currentBranchUuid = (app as any).branch_uuid;
-          console.log({ app });
           return (
             <>
               {data?.is_profile_headquarter ? (

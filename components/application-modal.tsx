@@ -8,6 +8,7 @@ import {
   Button,
   Image,
   useDisclosure,
+  cn,
 } from "@heroui/react";
 import { Download } from "lucide-react";
 import useSWR from "swr";
@@ -16,6 +17,7 @@ import {
   Application,
   ApplicationFile,
   ApplicationFileListResponse,
+  ContractResponse,
   DocumentTypeListResponse,
 } from "@/types";
 import {
@@ -23,8 +25,9 @@ import {
   APPLICATION_STATUS_MAP,
 } from "@/utils/constants";
 import { fetcher } from "@/utils/fetcher";
-import { getFileUrl, formatDateTimeVN } from "@/utils/functions";
+import { getFileUrl, formatDateTimeVN, formatDateVN } from "@/utils/functions";
 import ShowImageModal from "@/components/show-image-modal";
+import ContractModal from "@/components/contract-modal";
 
 interface ApplicationModalProps {
   application: Application;
@@ -36,11 +39,13 @@ interface ApplicationModalProps {
 const InfoRow = ({
   label,
   value,
+  className,
 }: {
   label: string;
   value?: React.ReactNode;
+  className?: string;
 }) => (
-  <div className="flex flex-col gap-1 py-1">
+  <div className={cn("flex flex-col gap-1 py-1", className)}>
     <div className="text-sm text-default-500">{label}</div>
     <div className="font-medium">
       {value ?? <span className="text-default-400">/</span>}
@@ -59,6 +64,11 @@ export default function ApplicationModal({
     onOpen: onImageViewerOpen,
     onClose: onImageViewerClose,
   } = useDisclosure();
+  const {
+    isOpen: isContractModalOpen,
+    onOpen: onContractModalOpen,
+    onClose: onContractModalClose,
+  } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageAlt, setSelectedImageAlt] = useState<string>("");
   const [selectedImagePath, setSelectedImagePath] = useState<string | null>(
@@ -74,6 +84,11 @@ export default function ApplicationModal({
 
   const { data: documentTypes } = useSWR<DocumentTypeListResponse>(
     `/api/document-type?loginId=${loginId}`,
+    fetcher
+  );
+
+  const { data: contracts } = useSWR<ContractResponse>(
+    `/api/contract?loginId=${loginId}&filter=${JSON.stringify({ application: application.id })}`,
     fetcher
   );
 
@@ -191,6 +206,13 @@ export default function ApplicationModal({
     .filter((item) => item.docType) // Only include if docType exists
     .sort((a, b) => (a.docType?.index || 0) - (b.docType?.index || 0));
 
+  const handleOpenContract = () => {
+    const contract = contracts?.rows?.[0];
+    if (contract) {
+      onContractModalOpen();
+    }
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} size={"5xl"} onClose={onClose}>
@@ -210,7 +232,7 @@ export default function ApplicationModal({
                     <InfoRow label="Họ tên" value={application.fullname} />
                     <InfoRow
                       label="Mã khách hàng"
-                      value={application.customer}
+                      value={application.customer__code}
                     />
                     <InfoRow label="Điện thoại" value={application.phone} />
 
@@ -223,10 +245,20 @@ export default function ApplicationModal({
                       value="Căn cước công dân"
                     />
                     <InfoRow label="Mã số" value={application.legal_code} />
-                    <InfoRow label="Ngày cấp" value={application.issue_date} />
+                    <InfoRow
+                      label="Ngày cấp"
+                      value={
+                        application.issue_date
+                          ? formatDateVN(new Date(application.issue_date))
+                          : "/"
+                      }
+                    />
 
                     <InfoRow label="Nơi cấp" value={application.issue_place} />
-                    <InfoRow label="Quốc gia" value="Việt Nam" />
+                    <InfoRow
+                      label="Quốc gia"
+                      value={application.country__name || "/"}
+                    />
 
                     <InfoRow
                       label="Tỉnh/Thành phố"
@@ -235,8 +267,14 @@ export default function ApplicationModal({
                     <InfoRow label="Quận/Huyện" value={application.district} />
                     <InfoRow label="Địa chỉ" value={application.address} />
 
-                    <InfoRow label="Loại sản phẩm" value="Cầm đồ" />
-                    <InfoRow label="Tài sản cầm cố" value="Điện thoại" />
+                    <InfoRow
+                      label="Loại sản phẩm"
+                      value={application.product__type__name || "/"}
+                    />
+                    <InfoRow
+                      label="Tài sản cầm cố"
+                      value={application.product__category__name || "/"}
+                    />
                     <InfoRow
                       label="Số tiền vay"
                       value={`${application.loan_amount.toLocaleString()} VNĐ`}
@@ -266,6 +304,7 @@ export default function ApplicationModal({
                     <InfoRow
                       label="Trạng thái đơn vay"
                       value={`${application.status}. ${APPLICATION_STATUS_MAP[application.status]?.label || ""}`}
+                      className={"text-primary"}
                     />
 
                     <InfoRow
@@ -300,12 +339,12 @@ export default function ApplicationModal({
                       label="Thời gian duyệt"
                       value={
                         application.approve_time
-                          ? formatDateTimeVN(application.approve_time)
+                          ? formatDateTimeVN(new Date(application.approve_time))
                           : "/"
                       }
                     />
                     <InfoRow label="Được ký bởi" value="/" />
-                    <InfoRow label="Thời gian ký hợp đồng" value="/" />
+                    <InfoRow label="Thời gian ký hợp đồng" value={"/"} />
                   </div>
                 </div>
 
@@ -464,10 +503,14 @@ export default function ApplicationModal({
 
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Đóng
+                  In thông tin
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Lưu
+                <Button
+                  color="primary"
+                  onPress={handleOpenContract}
+                  isDisabled={!contracts?.rows || contracts.rows.length === 0}
+                >
+                  Mở hợp đồng
                 </Button>
               </ModalFooter>
             </>
@@ -485,6 +528,19 @@ export default function ApplicationModal({
           onClose={handleCloseImageViewer}
         />
       )}
+      {/* Contract Modal */}
+      {isContractModalOpen &&
+        contracts?.rows &&
+        contracts.rows.length > 0 &&
+        application?.code && (
+          <ContractModal
+            contract={contracts?.rows?.[0] || null}
+            isOpen={isContractModalOpen}
+            loginId={loginId}
+            onClose={onContractModalClose}
+            applicationCode={application?.code || ""}
+          />
+        )}
     </>
   );
 }

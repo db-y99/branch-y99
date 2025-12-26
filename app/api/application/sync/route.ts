@@ -65,8 +65,6 @@ export async function POST(request: Request) {
     const apiData = await response.json();
     const list = apiData?.rows || [];
 
-    console.log({ list, filterObj, length: list.length });
-
     if (!Array.isArray(list) || list.length === 0) {
       return NextResponse.json({
         message: "No new records to sync",

@@ -48,3 +48,13 @@ export const getFileUrl = (file: string) => {
 
   return `${process.env.NEXT_PUBLIC_API_URL}/static/files/${file}`;
 };
+
+export const formatDateVN = (date: Date | string): string => {
+  const d = typeof date === "string" ? new Date(date) : date;
+
+  return d.toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
