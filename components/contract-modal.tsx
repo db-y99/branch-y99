@@ -159,6 +159,7 @@ export default function ContractModal({
                             src={getContractUrl(selectedDocument.pdf)}
                             width="100%"
                             height="100%"
+                            title="Contract"
                           />
                         </div>
                       ) : (
