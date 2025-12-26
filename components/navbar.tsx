@@ -15,6 +15,7 @@ import { Input } from "@heroui/input";
 import NextLink from "next/link";
 import {
   Avatar,
+  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -101,7 +102,12 @@ export const Navbar = () => {
         <NavbarItem className="hidden sm:flex gap-2">
           <ThemeSwitch />
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+        <NavbarItem>
+          <Button variant="faded" size="md">
+            {profile?.branch_id?.name}
+          </Button>
+        </NavbarItem>
+        {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
         {profile && (
           <NavbarItem>
             <Dropdown placement="bottom-end">

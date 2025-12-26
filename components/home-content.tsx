@@ -47,7 +47,7 @@ import { updateApplicationRecordBranch } from "@/actions/application-records";
 /* ================= COLUMNS ================= */
 
 const columns = [
-  { name: "CODE", uid: "code", sortable: true },
+  { name: "CODE", uid: "code", sortable: false },
   { name: "MÃ KHÁCH HÀNG", uid: "customer__code" },
   { name: "FULL NAME", uid: "fullname" },
   { name: "GIỚI TÍNH", uid: "sex__name" },
@@ -67,7 +67,7 @@ const columns = [
   { name: "STATUS", uid: "status" },
   { name: "NOTE", uid: "note" },
   { name: "BRANCH UUID", uid: "branch_uuid" },
-  { name: "CREATED TIME", uid: "create_time" },
+  { name: "CREATED TIME", uid: "create_time", sortable: true },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -127,7 +127,7 @@ export default function HomeContent() {
   const [rowsPerPage, setRowsPerPage] = React.useState(ROWS_PER_PAGE);
   const [page, setPage] = React.useState(1);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "code",
+    column: "create_time",
     direction: "descending",
   });
   const [isSyncing, setIsSyncing] = React.useState(false);
@@ -161,10 +161,21 @@ export default function HomeContent() {
         : "",
       `page=${page}`,
       `limit=${rowsPerPage}`,
+      // Only allow sorting by create_time
+      sortDescriptor.column === "create_time"
+        ? `sort=${sortDescriptor.column}&order=${sortDescriptor.direction === "ascending" ? "asc" : "desc"}`
+        : "",
     ].filter(Boolean);
 
     return params.length ? `&${params.join("&")}` : "";
-  }, [statusQuery, dateQuery, debouncedSearchValue, page, rowsPerPage]);
+  }, [
+    statusQuery,
+    dateQuery,
+    debouncedSearchValue,
+    page,
+    rowsPerPage,
+    sortDescriptor,
+  ]);
 
   const { data, isLoading, mutate, isValidating } =
     useSWR<ApplicationListResponse>(
@@ -181,8 +192,6 @@ export default function HomeContent() {
   const branches = branchesData?.rows ?? [];
   const applications = data?.rows ?? [];
   const totalRows = data?.total_rows || 0;
-
-  console.log({ applications });
 
   /* ================= SYNC HANDLER ================= */
 
@@ -227,20 +236,7 @@ export default function HomeContent() {
   const pages = Math.ceil(totalRows / rowsPerPage) || 1;
 
   /* ================= SORT ================= */
-
-  const sortedItems = React.useMemo(() => {
-    return [...applications].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof Application];
-      const second = b[sortDescriptor.column as keyof Application];
-
-      if (first < second)
-        return sortDescriptor.direction === "ascending" ? -1 : 1;
-      if (first > second)
-        return sortDescriptor.direction === "ascending" ? 1 : -1;
-
-      return 0;
-    });
-  }, [applications, sortDescriptor]);
+  // Sort is handled on server side, no client-side sorting needed
 
   /* ================= HEADER ================= */
 
@@ -340,7 +336,10 @@ export default function HomeContent() {
 
         case "status":
           return (
-            <Chip color={APPLICATION_STATUS_MAP[app.status].color} size="sm">
+            <Chip
+              color={APPLICATION_STATUS_MAP[app.status].color || ""}
+              size="sm"
+            >
               {APPLICATION_STATUS_MAP[app.status].label}
             </Chip>
           );
@@ -598,7 +597,7 @@ export default function HomeContent() {
 
         <TableBody
           emptyContent={isLoading ? "Loading..." : "No applications"}
-          items={sortedItems}
+          items={applications}
         >
           {(item) => (
             <TableRow key={item.id}>

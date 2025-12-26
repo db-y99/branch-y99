@@ -92,6 +92,23 @@ export default function ApplicationModal({
     fetcher
   );
 
+  const { data: applicationDetailResponse } = useSWR<{
+    rows: Application[];
+    total_rows: number;
+    full_data: boolean;
+  }>(
+    application.id
+      ? `/api/application/${application.id}?loginId=${loginId}`
+      : null,
+    fetcher
+  );
+
+  // Use applicationDetail if available, otherwise fallback to application prop
+  const applicationDetail =
+    applicationDetailResponse?.rows && applicationDetailResponse.rows.length > 0
+      ? applicationDetailResponse.rows[0]
+      : application;
+
   const handleImageClick = (
     imageUrl: string,
     alt: string,
@@ -228,123 +245,169 @@ export default function ApplicationModal({
                   <div className="text-lg font-semibold">Thông tin</div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-2">
-                    <InfoRow label="Mã đơn vay" value={application.code} />
-                    <InfoRow label="Họ tên" value={application.fullname} />
+                    <InfoRow
+                      label="Mã đơn vay"
+                      value={applicationDetail.code}
+                    />
+                    <InfoRow
+                      label="Họ tên"
+                      value={applicationDetail.fullname}
+                    />
                     <InfoRow
                       label="Mã khách hàng"
-                      value={application.customer__code}
+                      value={applicationDetail.customer__code}
                     />
-                    <InfoRow label="Điện thoại" value={application.phone} />
+                    <InfoRow
+                      label="Điện thoại"
+                      value={applicationDetail.phone}
+                    />
 
                     <InfoRow
                       label="Giới tính"
-                      value={application.sex === 1 ? "Nam" : "Nữ"}
+                      value={
+                        (applicationDetail as any).sex__name ||
+                        (applicationDetail.sex === 1 ? "Nam" : "Nữ")
+                      }
                     />
                     <InfoRow
                       label="Giấy tờ tùy thân"
-                      value="Căn cước công dân"
+                      value={
+                        (applicationDetail as any).legal_type__name ||
+                        "Căn cước công dân"
+                      }
                     />
-                    <InfoRow label="Mã số" value={application.legal_code} />
+                    <InfoRow
+                      label="Mã số"
+                      value={applicationDetail.legal_code}
+                    />
                     <InfoRow
                       label="Ngày cấp"
                       value={
-                        application.issue_date
-                          ? formatDateVN(new Date(application.issue_date))
+                        applicationDetail.issue_date
+                          ? formatDateVN(new Date(applicationDetail.issue_date))
                           : "/"
                       }
                     />
 
-                    <InfoRow label="Nơi cấp" value={application.issue_place} />
+                    <InfoRow
+                      label="Nơi cấp"
+                      value={applicationDetail.issue_place || "/"}
+                    />
                     <InfoRow
                       label="Quốc gia"
-                      value={application.country__name || "/"}
+                      value={applicationDetail.country__name || "/"}
                     />
 
                     <InfoRow
                       label="Tỉnh/Thành phố"
-                      value={application.province}
+                      value={applicationDetail.province}
                     />
-                    <InfoRow label="Quận/Huyện" value={application.district} />
-                    <InfoRow label="Địa chỉ" value={application.address} />
+                    <InfoRow
+                      label="Quận/Huyện"
+                      value={applicationDetail.district}
+                    />
+                    <InfoRow
+                      label="Địa chỉ"
+                      value={applicationDetail.address}
+                    />
 
                     <InfoRow
                       label="Loại sản phẩm"
-                      value={application.product__type__name || "/"}
+                      value={applicationDetail.product__type__name || "/"}
                     />
                     <InfoRow
                       label="Tài sản cầm cố"
-                      value={application.product__category__name || "/"}
+                      value={applicationDetail.product__category__name || "/"}
                     />
                     <InfoRow
                       label="Số tiền vay"
-                      value={`${application.loan_amount.toLocaleString()} VNĐ`}
+                      value={`${applicationDetail.loan_amount.toLocaleString()} VNĐ`}
                     />
                     <InfoRow
                       label="Kỳ hạn"
-                      value={`${application.loan_term} tháng`}
+                      value={`${applicationDetail.loan_term} tháng`}
                     />
 
                     <InfoRow
                       label="Số tiền cho vay"
                       value={
-                        application.approve_amount
-                          ? `${application.approve_amount.toLocaleString()} VNĐ`
+                        applicationDetail.approve_amount
+                          ? `${applicationDetail.approve_amount.toLocaleString()} VNĐ`
                           : "/"
                       }
                     />
                     <InfoRow
                       label="Thời hạn vay"
                       value={
-                        application.approve_term
-                          ? `${application.approve_term} tháng`
+                        applicationDetail.approve_term
+                          ? `${applicationDetail.approve_term} tháng`
                           : "/"
                       }
                     />
 
                     <InfoRow
                       label="Trạng thái đơn vay"
-                      value={`${application.status}. ${APPLICATION_STATUS_MAP[application.status]?.label || ""}`}
+                      value={`${applicationDetail.status}. ${APPLICATION_STATUS_MAP[applicationDetail.status]?.label || (applicationDetail as any).status__name || ""}`}
                       className={"text-primary"}
                     />
 
                     <InfoRow
                       label="Người tạo"
-                      value={application.creator__fullname || "/"}
+                      value={applicationDetail.creator__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian tạo"
                       value={
-                        application.create_time
-                          ? formatDateTimeVN(application.create_time)
+                        applicationDetail.create_time
+                          ? formatDateTimeVN(applicationDetail.create_time)
                           : "/"
                       }
                     />
                     <InfoRow
                       label="Người cập nhật"
-                      value={application.updater__fullname || "/"}
+                      value={applicationDetail.updater__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian cập nhật"
                       value={
-                        application.update_time
-                          ? formatDateTimeVN(application.update_time)
+                        applicationDetail.update_time
+                          ? formatDateTimeVN(applicationDetail.update_time)
                           : "/"
                       }
                     />
                     <InfoRow
                       label="Người duyệt"
-                      value={application.approver__fullname || "/"}
+                      value={applicationDetail.approver__fullname || "/"}
                     />
                     <InfoRow
                       label="Thời gian duyệt"
                       value={
-                        application.approve_time
-                          ? formatDateTimeVN(new Date(application.approve_time))
+                        applicationDetail.approve_time
+                          ? formatDateTimeVN(
+                              new Date(applicationDetail.approve_time)
+                            )
                           : "/"
                       }
                     />
-                    <InfoRow label="Được ký bởi" value="/" />
-                    <InfoRow label="Thời gian ký hợp đồng" value={"/"} />
+                    <InfoRow
+                      label="Được ký bởi"
+                      value={
+                        (applicationDetail as any).appcntr__user__fullname ||
+                        "/"
+                      }
+                    />
+                    <InfoRow
+                      label="Thời gian ký hợp đồng"
+                      value={
+                        (applicationDetail as any).appcntr__update_time
+                          ? formatDateTimeVN(
+                              new Date(
+                                (applicationDetail as any).appcntr__update_time
+                              )
+                            )
+                          : "/"
+                      }
+                    />
                   </div>
                 </div>
 

@@ -14,6 +14,10 @@ export async function GET(request: Request) {
   const limit = parseInt(searchParams.get("limit") || "20");
   const offset = (page - 1) * limit;
 
+  // Sort parameters
+  const sortColumn = searchParams.get("sort") || "create_time";
+  const sortOrder = searchParams.get("order") || "desc";
+
   // Filter parameters
   const search = searchParams.get("search"); // General search
 
@@ -36,16 +40,23 @@ export async function GET(request: Request) {
   }
 
   // Build query for application_records
-  let query = supabase
-    .from("application_records")
-    .select(
-      `
+  let query = supabase.from("application_records").select(
+    `
         *,
         branches:branches!branch_uuid(*)
         `,
-      { count: "exact" }
-    )
-    .order("id", { ascending: false });
+    { count: "exact" }
+  );
+
+  // Only allow sorting by create_time
+  if (sortColumn === "create_time") {
+    query = query.order("create_time", {
+      ascending: sortOrder === "asc",
+    });
+  } else {
+    // Default sort by create_time descending
+    query = query.order("create_time", { ascending: false });
+  }
 
   // Apply date filter
   if (from) {

@@ -22,12 +22,12 @@ export const APPLICATION_STATUS_MAP: Record<
 > = {
   0: { label: "Tất cả", color: "default" },
   1: { label: "Mới khởi tạo", color: "default" },
-  2: { label: "Chờ thẩm định", color: "warning" },
-  3: { label: "Bổ sung thông tin", color: "primary" },
+  2: { label: "Chờ thẩm định", color: "default" },
+  3: { label: "Bổ sung thông tin", color: "warning" },
   4: { label: "Từ chối", color: "danger" },
 
-  5: { label: "Đồng ý", color: "success" }, // Credit approved
-  6: { label: "Đã ký hợp đồng", color: "primary" }, // Legal phase
+  5: { label: "Đồng ý", color: "primary" }, // Credit approved
+  6: { label: "Đã ký hợp đồng", color: "success" }, // Legal phase
   7: { label: "Đã giải ngân", color: "secondary" }, // Financial complete
 };
 
